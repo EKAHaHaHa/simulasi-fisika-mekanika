@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi Fisika Mekanika Berbasis OBE - Usaha, Energi & Daya</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="app-header">
+        <h1>🌌 Simulasi Fisika Mekanika Berbasis OBE</h1>
+        <p>Media Pembelajaran Interaktif: Usaha, Energi, Hukum Kekekalan Energi Mekanik, dan Daya</p>
+    </header>
+
+    <div class="main-container">
+        
+        <!-- KOLOM KIRI: VISUALISASI DAN GRAFIK -->
+        <div class="left-column">
+            
+            <!-- Area Kanvas Simulasi Animasi -->
+            <div class="card visual-card">
+                <div class="card-header">
+                    <h3>🖼️ Visualisasi Simulasi & Vektor Gaya</h3>
+                    <span id="badgeSistem" class="badge">Jatuh Bebas</span>
+                </div>
+                <div class="canvas-wrapper">
+                    <canvas id="simCanvas" width="580" height="420"></canvas>
+                </div>
+                
+                <!-- Kontrol Animasi -->
+                <div class="button-group">
+                    <button id="btnPlay" class="btn btn-primary">▶️ Mulai / Pause</button>
+                    <button id="btnReset" class="btn btn-danger">🔄 Reset Simulasi</button>
+                </div>
+            </div>
+
+            <!-- Area Grafik Energi Real-Time -->
+            <div class="card chart-card">
+                <div class="card-header">
+                    <h3>📈 Grafik Perubahan Energi Real-time (Joule vs Detik)</h3>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="energyChart" width="580" height="180"></canvas>
+                </div>
+                <div class="chart-legend">
+                    <span class="legend-item"><span class="color-dot ep-dot"></span> Energi Potensial (Ep)</span>
+                    <span class="legend-item"><span class="color-dot ek-dot"></span> Energi Kinetik (Ek)</span>
+                    <span class="legend-item"><span class="color-dot em-dot"></span> Energi Mekanik (Em)</span>
+                </div>
+            </div>
+
+            <!-- Panel Informasi Real-time -->
+            <div class="card info-card">
+                <h3>📊 State System Real-time</h3>
+                <div class="info-grid">
+                    <div class="info-box"><span>Waktu (t):</span> <strong id="valTime">0.00 s</strong></div>
+                    <div class="info-box"><span>Kecepatan (v):</span> <strong id="valVelocity">0.00 m/s</strong></div>
+                    <div class="info-box"><span>Ketinggian (h):</span> <strong id="valHeight">0.00 m</strong></div>
+                    <div class="info-box ep-box"><span>Ep:</span> <strong id="valEp">0.00 J</strong></div>
+                    <div class="info-box ek-box"><span>Ek:</span> <strong id="valEk">0.00 J</strong></div>
+                    <div class="info-box em-box"><span>Em:</span> <strong id="valEm">0.00 J</strong></div>
+                    <div class="info-box"><span>Usaha (W):</span> <strong id="valW">0.00 J</strong></div>
+                    <div class="info-box"><span>Daya Rerata (P):</span> <strong id="valPower">0.00 W</strong></div>
+                </div>
+                <div id="statusAnimasi" class="status-banner">Sistem Siap</div>
+            </div>
+        </div>
+
+        <!-- KOLOM KANAN: PARAMETER CONTROL & OBE MODUL -->
+        <div class="right-column">
+            
+            <!-- Panel Parameter Input -->
+            <div class="card control-card">
+                <h3>⚙️ Parameter Simulasi</h3>
+                
+                <div class="control-group">
+                    <label for="selectSistem">Pilih Sistem Fisika:</label>
+                    <select id="selectSistem">
+                        <option value="jatuhBebas">1. Gerak Jatuh Bebas (dengan v₀)</option>
+                        <option value="bidangMiringGesek">2. Bidang Miring + Gesekan (L, θ, µ)</option>
+                        <option value="bandul">3. Bandul Sederhana (Kekekalan Energi)</option>
+                        <option value="angkatBeban">4. Mengangkat Beban (Usaha & Daya)</option>
+                    </select>
+                </div>
+
+                <div class="control-grid">
+                    <div class="control-group">
+                        <label for="inputMassa">Massa (m) [kg]:</label>
+                        <input type="number" id="inputMassa" value="2.0" step="0.1" min="0.01">
+                    </div>
+
+                    <div class="control-group">
+                        <label for="inputGrav">Gravitasi (g) [m/s²]:</label>
+                        <input type="number" id="inputGrav" value="10.0" step="0.1" min="0">
+                    </div>
+
+                    <div class="control-group">
+                        <label for="inputV0">Kecepatan Awal (v₀) [m/s]:</label>
+                        <input type="number" id="inputV0" value="0.0" step="0.5" min="0">
+                    </div>
+
+                    <div class="control-group" id="groupParam1">
+                        <label id="labelParam1" for="inputParam1">Ketinggian Awal (h₀) [m]:</label>
+                        <input type="number" id="inputParam1" value="10.0" step="0.5" min="0.1">
+                    </div>
+
+                    <div class="control-group" id="groupParam2">
+                        <label id="labelParam2" for="inputParam2">Sudut Kemiringan (θ) [°]:</label>
+                        <input type="number" id="inputParam2" value="30" step="1" min="1" max="89">
+                    </div>
+
+                    <div class="control-group" id="groupParam3">
+                        <label id="labelParam3" for="inputParam3">Koefisien Gesek (µ):</label>
+                        <input type="number" id="inputParam3" value="0.15" step="0.01" min="0" max="2">
+                    </div>
+
+                    <div class="control-group" id="groupParam4" style="display: none;">
+                        <label id="labelParam4" for="inputParam4">Waktu Target (t) [s]:</label>
+                        <input type="number" id="inputParam4" value="5.0" step="0.5" min="0.1">
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB MODUL OBE: FORMULASI, KALKULATOR & STEP-BY-STEP CALCULATION -->
+            <div class="card obe-card">
+                <div class="obe-header">
+                    <h3>🎓 Modul Pembelajaran OBE</h3>
+                </div>
+                
+                <!-- Formulasi Konsep OBE -->
+                <div class="obe-section">
+                    <h4>1. Formulasi & Konsep Fisika</h4>
+                    <div id="obeFormulasi" class="obe-content-box">
+                        <!-- Diisi secara dinamis oleh JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Step-by-Step Calculation dari Simulasi -->
+                <div class="obe-section">
+                    <h4>2. Analisis Perhitungan Berdasarkan Simulasi</h4>
+                    <div id="obeCalculation" class="obe-content-box calculation-box">
+                        <!-- Diisi secara dinamis oleh JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Kalkulator Solver Besaran Tak Diketahui -->
+                <div class="obe-section">
+                    <h4>3. Kalkulator Solver Besaran Fisika (OBE Problem Solver)</h4>
+                    <div class="solver-controls">
+                        <label for="selectBesaranDicari">Besaran yang Ingin Dicari:</label>
+                        <select id="selectBesaranDicari">
+                            <option value="cariEp">Energi Potensial (Ep)</option>
+                            <option value="cariEk">Energi Kinetik (Ek)</option>
+                            <option value="cariEm">Energi Mekanik (Em)</option>
+                            <option value="cariV">Kecepatan Akhir (v)</option>
+                            <option value="cariH">Ketinggian (h)</option>
+                            <option value="cariM">Massa Benda (m)</option>
+                            <option value="cariW">Usaha (W)</option>
+                            <option value="cariP">Daya Rata-rata (P)</option>
+                            <option value="cariT">Waktu Pengangkatan/Jatuh (t)</option>
+                        </select>
+                        <button id="btnSolveOBE" class="btn btn-secondary">📐 Hitung Solusi OBE</button>
+                    </div>
+                    <div id="obeSolverResult" class="obe-content-box solver-box">
+                        <i>Pilih besaran fisika yang ingin dicari lalu klik tombol di atas.</i>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
